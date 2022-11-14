@@ -1,11 +1,12 @@
 from setuptools import setup, find_packages
+import re
 
 try:
     from pip._internal.operations import freeze
 except ImportError:
     from pip.operations import freeze
 
-installed_names = map(lambda x:x.split('=')[0], freeze.freeze())
+installed_names = map(lambda x:re.match('\w+',x).group(), freeze.freeze())
 
 exceptions = [
         '@ file',
@@ -17,11 +18,10 @@ with open('requirements.txt', 'r') as f:
     #Remove packages that have patterns from the exceptios
     for exc in exceptions:
         deps = list(filter(lambda x:not (exc in x), deps))
-        installed_names = list(filter(lambda x:not (exc in x), installed_names))
 
     #Dont install already installed packages
     for installed in installed_names:
-        filteter = lambda x:not (installed in x.split('=')[0])
+        filteter = lambda x:not (installed in re.match('\w+',x).group())
         deps = list(filter(filteter, deps))
 
 
@@ -38,7 +38,6 @@ for pdr in search_dirs:
     packages += new_packs
 
 packages += find_packages()
-print(deps)
 setup(name='cifart',
       version='1.0',
       description='',
