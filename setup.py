@@ -18,12 +18,11 @@ with open('requirements.txt', 'r') as f:
     #Remove packages that have patterns from the exceptios
     for exc in exceptions:
         deps = list(filter(lambda x:not (exc in x), deps))
-
+    
     #Dont install already installed packages
-    for installed in installed_names:
-        filteter = lambda x:not (installed in re.match('\w+',x).group())
-        deps = list(filter(filteter, deps))
-
+    installed = list(installed_names)
+    filteter = lambda x:not (re.match('\w+',x).group() in installed)
+    deps = list(filter(filteter, deps))
 
 #Find packages in base dir and search_dirs
 search_dirs = [ 'submodules/pytorch_GAN_zoo_xla' ]
